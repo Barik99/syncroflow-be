@@ -1,7 +1,7 @@
 package vlad.mester.syncroflowbe.Triggers;
 
 import lombok.Getter;
-import vlad.mester.syncroflowbe.Enums.TypesOfTriggers;
+import org.json.simple.JSONObject;
 import vlad.mester.syncroflowbe.base.Triggers;
 
 import java.io.File;
@@ -12,9 +12,10 @@ public class ExternalProgram extends Triggers {
     private final File externalProgram;
     private final String commandLineArguments;
     private final int exitStatus;
+    public static final String type = "External Program";
 
     public ExternalProgram(String name, File externalProgram, String commandLineArguments, int exitStatus) {
-        super(name, TypesOfTriggers.EXTERNAL_PROGRAM.name(), "Program: " + externalProgram.getName() +
+        super(name, type, "Program: " + externalProgram.getName() +
                 "/Arguments: " + commandLineArguments + "/Exit Status: " + exitStatus);
         this.externalProgram = externalProgram;
         this.commandLineArguments = commandLineArguments;
@@ -33,5 +34,14 @@ public class ExternalProgram extends Triggers {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public JSONObject getJSONObject() {
+        JSONObject trigger = super.getJSONObject();
+        trigger.put("externalProgram", this.externalProgram.getAbsolutePath());
+        trigger.put("commandLineArguments", this.commandLineArguments);
+        trigger.put("exitStatus", this.exitStatus);
+        return trigger;
     }
 }

@@ -1,43 +1,41 @@
 package vlad.mester.syncroflowbe.Actions;
 
 import lombok.Getter;
-import vlad.mester.syncroflowbe.Enums.TypesOfAction;
+import org.json.simple.JSONObject;
 import vlad.mester.syncroflowbe.RuleController;
 import vlad.mester.syncroflowbe.base.Actions;
 
 @Getter
 public class CombinedActions extends Actions {
-    private final Actions firstAction;
-    private final Actions secondAction;
+    private final String firstAction;
+    private final String secondAction;
     private final RuleController ruleController;
+    public static final String type = "Combined Actions";
 
-    public CombinedActions(String name, Actions firstAction, Actions secondAction) {
-        super(name, TypesOfAction.COMBINED_ACTIONS.name(), firstAction.getName() + " + " + secondAction.getName());
+    public CombinedActions(String name, String firstAction, String secondAction, String id) {
+        super(name, type, firstAction + " + " + secondAction);
         this.firstAction = firstAction;
         this.secondAction = secondAction;
-        this.ruleController = RuleController.getInstance();
-        this.ruleController.addUsedAction(firstAction.getName());
-        this.ruleController.addUsedAction(secondAction.getName());
-    }
-
-    public CombinedActions(String name, String firstAction, String secondAction) {
-        super(name, TypesOfAction.COMBINED_ACTIONS.name(), firstAction + " + " + secondAction);
-        this.ruleController = RuleController.getInstance();
-        this.firstAction = ruleController.getActionByName(firstAction);
-        this.secondAction = ruleController.getActionByName(secondAction);
-        this.ruleController.addUsedAction(firstAction);
-        this.ruleController.addUsedAction(secondAction);
+        this.ruleController = RuleController.getInstance(id);
     }
 
     @Override
     public boolean execute() {
         try{
-            firstAction.execute();
-            secondAction.execute();
+            ruleController.getActionByName(firstAction).execute();
+            ruleController.getActionByName(secondAction).execute();
             return true;
         } catch (Exception e){
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public JSONObject getJSONObject() {
+        JSONObject action = super.getJSONObject();
+        action.put("firstAction", this.firstAction);
+        action.put("secondAction", this.secondAction);
+        return action;
     }
 }

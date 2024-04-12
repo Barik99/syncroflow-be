@@ -1,7 +1,7 @@
 package vlad.mester.syncroflowbe.Actions;
 
 import lombok.Getter;
-import vlad.mester.syncroflowbe.Enums.TypesOfAction;
+import org.json.simple.JSONObject;
 import vlad.mester.syncroflowbe.base.Actions;
 
 import java.io.File;
@@ -9,9 +9,10 @@ import java.io.File;
 @Getter
 public class DeleteFile extends Actions {
     private final File fileToDelete;
+    public static final String type = "Delete File";
 
     public DeleteFile(String name, File fileToDelete) {
-        super(name, TypesOfAction.DELETE_FILE.name(), "File: " + fileToDelete.getName());
+        super(name, type, "File: " + fileToDelete.getName());
         this.fileToDelete = fileToDelete;
     }
 
@@ -23,5 +24,12 @@ public class DeleteFile extends Actions {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public JSONObject getJSONObject() {
+        JSONObject action = super.getJSONObject();
+        action.put("fileToDelete", this.fileToDelete.getAbsolutePath());
+        return action;
     }
 }

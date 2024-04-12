@@ -1,7 +1,7 @@
 package vlad.mester.syncroflowbe.Triggers;
 
 import lombok.Getter;
-import vlad.mester.syncroflowbe.Enums.TypesOfTriggers;
+import org.json.simple.JSONObject;
 import vlad.mester.syncroflowbe.base.Triggers;
 
 import java.io.File;
@@ -13,9 +13,10 @@ import java.nio.file.Path;
 public class FileSize extends Triggers {
     private final File file;
     private final long sizeThreshold;
+    public static final String type = "File Size";
 
     public FileSize(String name, File file, long sizeThreshold) {
-        super(name, TypesOfTriggers.FILE_SIZE.name(), file.getName() + "/Size Threshold " + sizeThreshold);
+        super(name, type, file.getName() + "/Size Threshold " + sizeThreshold);
         this.file = file;
         this.sizeThreshold = sizeThreshold;
     }
@@ -30,5 +31,13 @@ public class FileSize extends Triggers {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public JSONObject getJSONObject() {
+        JSONObject trigger = super.getJSONObject();
+        trigger.put("file", this.file.getAbsolutePath());
+        trigger.put("sizeThreshold", this.sizeThreshold);
+        return trigger;
     }
 }

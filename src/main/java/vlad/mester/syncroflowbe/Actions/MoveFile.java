@@ -1,7 +1,7 @@
 package vlad.mester.syncroflowbe.Actions;
 
 import lombok.Getter;
-import vlad.mester.syncroflowbe.Enums.TypesOfAction;
+import org.json.simple.JSONObject;
 import vlad.mester.syncroflowbe.base.Actions;
 
 import java.io.File;
@@ -13,9 +13,10 @@ import java.nio.file.StandardCopyOption;
 public class MoveFile extends Actions {
     private final File fileToMove;
     private final File destinationPath;
+    public static final String type = "Move File";
 
     public MoveFile(String name, File fileToMove, File destinationPath) {
-        super(name, TypesOfAction.MOVE_FILE.name(), "File: " + fileToMove.getName() + "/DestinationPath: " + destinationPath.getAbsolutePath());
+        super(name, type, "File: " + fileToMove.getName() + "/DestinationPath: " + destinationPath.getAbsolutePath());
         this.fileToMove = fileToMove;
         this.destinationPath = destinationPath;
     }
@@ -32,5 +33,13 @@ public class MoveFile extends Actions {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public JSONObject getJSONObject() {
+        JSONObject action = super.getJSONObject();
+        action.put("fileToMove", this.fileToMove.getAbsolutePath());
+        action.put("destinationPath", this.destinationPath.getAbsolutePath());
+        return action;
     }
 }

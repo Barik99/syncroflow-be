@@ -1,7 +1,7 @@
 package vlad.mester.syncroflowbe.Actions;
 
 import lombok.Getter;
-import vlad.mester.syncroflowbe.Enums.TypesOfAction;
+import org.json.simple.JSONObject;
 import vlad.mester.syncroflowbe.base.Actions;
 
 import java.io.File;
@@ -11,9 +11,10 @@ import java.io.IOException;
 public class StartExternalProgram extends Actions {
     private final File externalProgram;
     private final String commandLineArguments;
+    public static final String type = "Start External Program";
 
     public StartExternalProgram(String name, File externalProgram, String commandLineArguments) {
-        super(name, TypesOfAction.START_EXTERNAL_PROGRAM.name(), "File: " + externalProgram.getName() + "/CommandLineArguments: " + commandLineArguments);
+        super(name, type, "File: " + externalProgram.getName() + "/CommandLineArguments: " + commandLineArguments);
         this.externalProgram = externalProgram;
         this.commandLineArguments = commandLineArguments;
     }
@@ -30,5 +31,13 @@ public class StartExternalProgram extends Actions {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public JSONObject getJSONObject() {
+        JSONObject action = super.getJSONObject();
+        action.put("externalProgram", this.externalProgram.getAbsolutePath());
+        action.put("commandLineArguments", this.commandLineArguments);
+        return action;
     }
 }

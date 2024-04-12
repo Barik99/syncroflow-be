@@ -1,36 +1,33 @@
 package vlad.mester.syncroflowbe.Triggers;
 
 import lombok.Getter;
-import vlad.mester.syncroflowbe.Enums.TypesOfTriggers;
+import org.json.simple.JSONObject;
 import vlad.mester.syncroflowbe.RuleController;
 import vlad.mester.syncroflowbe.base.Triggers;
 
 @Getter
 public class AND extends Triggers {
-    private final Triggers firstTrigger;
-    private final Triggers secondTrigger;
+    private final String firstTrigger;
+    private final String secondTrigger;
     private final RuleController ruleController;
+    public static final String type = "AND";
 
-    public AND(String name, Triggers firstTrigger, Triggers secondTrigger) {
-        super(name, TypesOfTriggers.AND.name(), firstTrigger.getName() + "AND" + secondTrigger.getName());
+    public AND(String name, String firstTrigger, String secondTrigger, String id) {
+        super(name, type, firstTrigger + " AND " + secondTrigger);
         this.firstTrigger = firstTrigger;
         this.secondTrigger = secondTrigger;
-        this.ruleController = RuleController.getInstance();
-        this.ruleController.addUsedTrigger(firstTrigger.getName());
-        this.ruleController.addUsedTrigger(secondTrigger.getName());
+        this.ruleController = RuleController.getInstance(id);
     }
-
-    public AND(String name, String firstTriggerName, String secondTriggerName) {
-        super(name, TypesOfTriggers.AND.name(), firstTriggerName + "AND" + secondTriggerName);
-        this.ruleController = RuleController.getInstance();
-        this.firstTrigger = ruleController.getTriggerByName(firstTriggerName);
-        this.secondTrigger = ruleController.getTriggerByName(secondTriggerName);
-        this.ruleController.addUsedTrigger(firstTriggerName);
-        this.ruleController.addUsedTrigger(secondTriggerName);
+    @Override
+    public boolean evaluate() {
+        return ruleController.getTriggerByName(firstTrigger).evaluate() && ruleController.getTriggerByName(secondTrigger).evaluate();
     }
 
     @Override
-    public boolean evaluate() {
-        return firstTrigger.evaluate() && secondTrigger.evaluate();
+    public JSONObject getJSONObject() {
+        JSONObject trigger = super.getJSONObject();
+        trigger.put("firstTrigger", this.firstTrigger);
+        trigger.put("secondTrigger", this.secondTrigger);
+        return trigger;
     }
 }

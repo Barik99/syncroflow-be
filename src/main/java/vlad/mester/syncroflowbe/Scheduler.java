@@ -8,9 +8,9 @@ public class Scheduler implements RuleControllerObserver {
     private final RuleController ruleController;
     private Thread schedulerThread;
 
-    public Scheduler(int interval) {
+    public Scheduler(int interval, String id) {
         this.interval = interval;
-        this.ruleController = RuleController.getInstance();
+        this.ruleController = RuleController.getInstance(id);
     }
 
     public void start() {
@@ -44,20 +44,24 @@ public class Scheduler implements RuleControllerObserver {
     public void checkRules() {
         synchronized (ruleController) {
             for (Rule rule : ruleController.getRules()) {
+                System.out.println("Checking rule: " + rule.getName());
                 if (!rule.isActive()) {
+                    System.out.println("Rule " + rule.getName() + " is inactive");
                     continue; // Skip inactive rules
                 }
 
-                long lastUseTime = rule.getLastUse() != null ? rule.getLastUse().getTime() : 0;
-                if (lastUseTime + rule.getSleepTime() * 1000 <= System.currentTimeMillis()) {
-                    continue; // Skip rules not ready for evaluation
+                if (!(rule.getLastUse() == null || rule.getLastUse().getTime() + rule.getSleepTime() * 1000 > System.currentTimeMillis())) {
+                    System.out.println("Rule " + rule.getName() + " is sleeping");
+                    continue; // if the condition fails, continue to the next iteration
                 }
 
-                if (!rule.getTrigger().evaluate()) {
+                if (!ruleController.getTriggerByName(rule.getTrigger()).evaluate()) {
+                    System.out.println("Rule " + rule.getName() + " has untriggered triggers");
                     continue; // Skip rules with untriggered triggers
                 }
 
-                if (!rule.getAction().execute()) {
+                if (!ruleController.getActionByName(rule.getAction()).execute()) {
+                    System.out.println("Rule " + rule.getName() + " failed to execute action");
                     continue; // Skip failed actions
                 }
                 rule.setLastUse();
