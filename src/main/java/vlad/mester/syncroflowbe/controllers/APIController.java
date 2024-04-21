@@ -1,6 +1,7 @@
 package vlad.mester.syncroflowbe.controllers;
 
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vlad.mester.syncroflowbe.requests.AddDirectoryRequest;
@@ -11,6 +12,7 @@ import vlad.mester.syncroflowbe.base.Actions;
 import vlad.mester.syncroflowbe.base.Rule;
 import vlad.mester.syncroflowbe.base.Triggers;
 import vlad.mester.syncroflowbe.requests.RemoveDirectoryRequest;
+import vlad.mester.syncroflowbe.requests.RemoveFileRequest;
 import vlad.mester.syncroflowbe.services.LoginService;
 
 import java.io.IOException;
@@ -123,9 +125,9 @@ public class APIController {
 
     @CrossOrigin(origins = "http://localhost:5173")
     @DeleteMapping("/removeFile")
-    public String removeFile(@RequestBody String file) {
+    public String removeFile(@RequestBody RemoveFileRequest file) {
         FileController fileController = new FileController();
-        return fileController.removeFile(file);
+        return fileController.removeFile(file.getFile());
     }
 
     @CrossOrigin(origins = "http://localhost:5173")
@@ -140,5 +142,12 @@ public class APIController {
     public String removeDirectory(@RequestBody RemoveDirectoryRequest removeDirectoryRequest) {
         FileController fileController = new FileController();
         return fileController.removeDirectory(removeDirectoryRequest.getDirectory());
+    }
+
+    @CrossOrigin(origins = "http://localhost:5173")
+    @GetMapping("/getDirectory")
+    public JSONObject getDirectory() {
+        FileController fileController = new FileController();
+        return fileController.getDirectoryStructure(FileController.root.getPath());
     }
 }
