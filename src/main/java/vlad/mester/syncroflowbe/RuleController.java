@@ -5,10 +5,8 @@ import lombok.Data;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import vlad.mester.syncroflowbe.Actions.CombinedActions;
-import vlad.mester.syncroflowbe.Triggers.AND;
-import vlad.mester.syncroflowbe.Triggers.NOT;
-import vlad.mester.syncroflowbe.Triggers.OR;
+import vlad.mester.syncroflowbe.Actions.*;
+import vlad.mester.syncroflowbe.Triggers.*;
 import vlad.mester.syncroflowbe.base.Actions;
 import vlad.mester.syncroflowbe.base.Rule;
 import vlad.mester.syncroflowbe.base.Triggers;
@@ -16,6 +14,7 @@ import vlad.mester.syncroflowbe.services.ActionService;
 import vlad.mester.syncroflowbe.services.RuleService;
 import vlad.mester.syncroflowbe.services.TriggerService;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,6 +57,14 @@ public class RuleController {
             e.printStackTrace();
         }
         return instance.get(id);
+    }
+
+    public static synchronized List<RuleController> getAllInstances() {
+        List<RuleController> ruleControllers = new ArrayList<>();
+        for (String id : instance.keySet()) {
+            ruleControllers.add(instance.get(id));
+        }
+        return ruleControllers;
     }
 
     public void addObserver(RuleControllerObserver observer) {
@@ -329,5 +336,85 @@ public class RuleController {
         JSONArray jsonArray = new JSONArray();
         jsonArray.addAll(actionsJson);
         return jsonArray;
+    }
+
+    public boolean fileIsUsed(File file) {
+        for (Triggers trigger : triggers.keySet()) {
+            switch (trigger.getType()) {
+                case FileExistence.type:
+                    FileExistence fileExistence = (FileExistence) trigger;
+                    if (fileExistence.getFile().equals(file)) {
+                        return true;
+                    }
+                    break;
+                case FileSize.type:
+                    FileSize fileSize = (FileSize) trigger;
+                    if (fileSize.getFile().equals(file)) {
+                        return true;
+                    }
+                    break;
+                case ExternalProgram.type:
+                    ExternalProgram externalProgram = (ExternalProgram) trigger;
+                    if (externalProgram.getExternalProgram().equals(file)) {
+                        return true;
+                    }
+                    break;
+            }
+        }
+        for (Actions action : actions.keySet()) {
+            switch (action.getType()) {
+                case AppendStringToFile.type:
+                    AppendStringToFile fileAction = (AppendStringToFile) action;
+                    if (fileAction.getFile().equals(file)) {
+                        return true;
+                    }
+                    break;
+                case DeleteFile.type:
+                    DeleteFile deleteFile = (DeleteFile) action;
+                    if (deleteFile.getFileToDelete().equals(file)) {
+                        return true;
+                    }
+                    break;
+                case MoveFile.type:
+                    MoveFile moveFile = (MoveFile) action;
+                    if (moveFile.getFileToMove().equals(file)) {
+                        return true;
+                    }
+                    break;
+                case PasteFile.type:
+                    PasteFile pasteFile = (PasteFile) action;
+                    if (pasteFile.getFileToPaste().equals(file)) {
+                        return true;
+                    }
+                    break;
+                case StartExternalProgram.type:
+                    StartExternalProgram startExternalProgram = (StartExternalProgram) action;
+                    if (startExternalProgram.getExternalProgram().equals(file)) {
+                        return true;
+                    }
+                    break;
+            }
+        }
+        return false;
+    }
+
+    public boolean directoryIsUsed(File directory) {
+        for (Actions action : actions.keySet()) {
+            switch (action.getType()) {
+                case MoveFile.type:
+                    MoveFile moveFile = (MoveFile) action;
+                    if (moveFile.getFileToMove().equals(directory)) {
+                        return true;
+                    }
+                    break;
+                case PasteFile.type:
+                    PasteFile pasteFile = (PasteFile) action;
+                    if (pasteFile.getFileToPaste().equals(directory)) {
+                        return true;
+                    }
+                    break;
+            }
+        }
+        return false;
     }
 }

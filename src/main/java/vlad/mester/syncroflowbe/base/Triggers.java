@@ -8,6 +8,7 @@ import vlad.mester.syncroflowbe.Triggers.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
 
 @Data
 public abstract class Triggers {
@@ -67,5 +68,20 @@ public abstract class Triggers {
             default:
                 throw new IOException("Invalid trigger type");
         }
+    }
+
+    public static String getAllTriggerTypes() {
+        Map<String, Map<String, String>> triggerTypes = new HashMap<>();
+        triggerTypes.put(TimeOfDay.type, Map.of("hours", "Long", "minutes", "Long"));
+        triggerTypes.put(OR.type, Map.of("firstTrigger", "String", "secondTrigger", "String"));
+        triggerTypes.put(NOT.type, Map.of("trigger", "String"));
+        triggerTypes.put(AND.type, Map.of("firstTrigger", "String", "secondTrigger", "String"));
+        triggerTypes.put(DayOfMonth.type, Map.of("day", "Long"));
+        triggerTypes.put(DayOfWeek.type, Map.of("day", "String"));
+        triggerTypes.put(ExternalProgram.type, Map.of("externalProgram", "String", "commandLineArguments", "String", "exitStatus", "Long"));
+        triggerTypes.put(FileExistence.type, Map.of("file", "String"));
+        triggerTypes.put(FileSize.type, Map.of("file", "String", "sizeThreshold", "Long"));
+
+        return new JSONObject(triggerTypes).toJSONString();
     }
 }

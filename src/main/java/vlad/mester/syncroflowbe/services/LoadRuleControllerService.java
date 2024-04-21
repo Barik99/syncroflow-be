@@ -14,19 +14,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoadRuleControllerService {
-    RuleController ruleController;
+    List<RuleController> ruleController = new ArrayList<>();
 
-    public LoadRuleControllerService(String id) {
-        ruleController = RuleController.createInstance(id);
+    public LoadRuleControllerService() {
+        try {
+            Connection connection = DriverManager.getConnection(DataBase.URL.toString(), DataBase.USERNAME.toString(), DataBase.PASSWORD.toString());
+            PreparedStatement statement = connection.prepareStatement("SELECT email FROM person");
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String id = resultSet.getString("email");
+                ruleController.add(RuleController.createInstance(id));
+            }
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        for (RuleController ruleController : ruleController) {
+            load(ruleController);
+        }
     }
 
-    public void load() {
+    public void load(RuleController ruleController) {
         List<Triggers> triggers;
         List<Actions> actions;
         List<Rule> rules;
-        triggers = getAllTriggers();
-        actions = getAllActions();
-        rules = getAllRules();
+        triggers = getAllTriggers(ruleController.getId());
+        actions = getAllActions(ruleController.getId());
+        rules = getAllRules(ruleController.getId());
         for (Triggers trigger : triggers) {
             ruleController.addTrigger(trigger);
         }
@@ -38,12 +52,12 @@ public class LoadRuleControllerService {
         }
     }
 
-    private List<Rule> getAllRules() {
+    private List<Rule> getAllRules(String id) {
         List<Rule> rules = new ArrayList<>();
         try {
             Connection connection = DriverManager.getConnection(DataBase.URL.toString(), DataBase.USERNAME.toString(), DataBase.PASSWORD.toString());
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM rule where creator_email = ?");
-            statement.setString(1, ruleController.getId());
+            statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 String name = resultSet.getString("name");
@@ -63,17 +77,17 @@ public class LoadRuleControllerService {
         return rules;
     }
 
-    public List<Triggers> getAllTriggers() {
+    public List<Triggers> getAllTriggers(String id) {
         List<Triggers> triggers = new ArrayList<>();
         try {
             Connection connection = DriverManager.getConnection(DataBase.URL.toString(), DataBase.USERNAME.toString(), DataBase.PASSWORD.toString());
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM triggers WHERE creator_email = ?");
-            statement.setString(1, ruleController.getId());
+            statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 String name = resultSet.getString("name");
                 String type = resultSet.getString("type");
-                Triggers trigger = getTriggerByTypeDB(name, type);
+                Triggers trigger = getTriggerByTypeDB(name, type, id);
                 triggers.add(trigger);
             }
             connection.close();
@@ -83,7 +97,7 @@ public class LoadRuleControllerService {
         return triggers;
     }
 
-    private Triggers getTriggerByTypeDB(String name, String type) {
+    private Triggers getTriggerByTypeDB(String name, String type, String id) {
         switch (type) {
             case FileSize.type:
                 FileSize fileSize = null;
@@ -198,7 +212,7 @@ public class LoadRuleControllerService {
                     if (resultSet.next()) {
                         String firstTriggerName = resultSet.getString("first_trigger_name");
                         String secondTriggerName = resultSet.getString("second_trigger_name");
-                        and = new AND(name, firstTriggerName, secondTriggerName, ruleController.getId());
+                        and = new AND(name, firstTriggerName, secondTriggerName, id);
                     }
                     connection.close();
                 } catch (SQLException e) {
@@ -215,7 +229,7 @@ public class LoadRuleControllerService {
                     if (resultSet.next()) {
                         String firstTriggerName = resultSet.getString("first_trigger_name");
                         String secondTriggerName = resultSet.getString("second_trigger_name");
-                        or = new OR(name, firstTriggerName, secondTriggerName, ruleController.getId());
+                        or = new OR(name, firstTriggerName, secondTriggerName, id);
                     }
                     connection.close();
                 } catch (SQLException e) {
@@ -231,7 +245,7 @@ public class LoadRuleControllerService {
                     ResultSet resultSet = statement.executeQuery();
                     if (resultSet.next()) {
                         String triggerName = resultSet.getString("trigger_name");
-                        not = new NOT(name, triggerName, ruleController.getId());
+                        not = new NOT(name, triggerName, id);
                     }
                     connection.close();
                 } catch (SQLException e) {
@@ -243,17 +257,17 @@ public class LoadRuleControllerService {
         }
     }
 
-    public List<Actions> getAllActions() {
+    public List<Actions> getAllActions(String id) {
         List<Actions> actions = new ArrayList<>();
         try {
             Connection connection = DriverManager.getConnection(DataBase.URL.toString(), DataBase.USERNAME.toString(), DataBase.PASSWORD.toString());
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM actions where creator_email = ?");
-            statement.setString(1, ruleController.getId());
+            statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 String name = resultSet.getString("name");
                 String type = resultSet.getString("type");
-                Actions action = getActionByTypeDB(name, type);
+                Actions action = getActionByTypeDB(name, type, id);
                 actions.add(action);
             }
             connection.close();
@@ -263,7 +277,7 @@ public class LoadRuleControllerService {
         return actions;
     }
 
-    private Actions getActionByTypeDB(String name, String type) {
+    private Actions getActionByTypeDB(String name, String type, String id) {
         switch (type) {
             case DeleteFile.type:
                 Actions deleteFile = null;
@@ -311,7 +325,7 @@ public class LoadRuleControllerService {
                     if (resultSet.next()) {
                         String firstActionName = resultSet.getString("first_action_name");
                         String secondActionName = resultSet.getString("second_action_name");
-                        combinedActions = new CombinedActions(name, firstActionName, secondActionName, ruleController.getId());
+                        combinedActions = new CombinedActions(name, firstActionName, secondActionName, id);
                     }
                     connection.close();
                 } catch (SQLException e) {

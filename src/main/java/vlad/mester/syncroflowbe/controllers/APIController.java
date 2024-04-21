@@ -2,12 +2,15 @@ package vlad.mester.syncroflowbe.controllers;
 
 import org.json.simple.JSONArray;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import vlad.mester.syncroflowbe.requests.AddDirectoryRequest;
+import vlad.mester.syncroflowbe.FileController;
 import vlad.mester.syncroflowbe.RuleController;
 import vlad.mester.syncroflowbe.Scheduler;
 import vlad.mester.syncroflowbe.base.Actions;
 import vlad.mester.syncroflowbe.base.Rule;
 import vlad.mester.syncroflowbe.base.Triggers;
-import vlad.mester.syncroflowbe.services.LoadRuleControllerService;
+import vlad.mester.syncroflowbe.requests.RemoveDirectoryRequest;
 import vlad.mester.syncroflowbe.services.LoginService;
 
 import java.io.IOException;
@@ -46,6 +49,7 @@ public class APIController {
         return ruleController.addRule(Rule.fromJSONObject(rule));
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/addTrigger/{email}")
     public String addTrigger(@PathVariable String email, @RequestBody String trigger) throws IOException {
         RuleController ruleController = RuleController.getInstance(email);
@@ -64,6 +68,7 @@ public class APIController {
         return ruleController.deleteRule(name);
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @DeleteMapping("/removeTrigger/{email}/{name}")
     public String removeTrigger(@PathVariable String email, @PathVariable String name) {
         RuleController ruleController = RuleController.getInstance(email);
@@ -100,12 +105,40 @@ public class APIController {
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/login/{email}/{password}")
     public boolean login(@PathVariable String email, @PathVariable String password) {
-        if(LoginService.login(email, password)) {
-            LoadRuleControllerService loadRuleControllerService = new LoadRuleControllerService(email);
-            loadRuleControllerService.load();
-            return true;
-        }else {
-            return false;
-        }
+        return LoginService.login(email, password);
+    }
+
+    @CrossOrigin(origins = "http://localhost:5173")
+    @GetMapping("/triggerTypes")
+    public String getTriggerTypes() {
+        return Triggers.getAllTriggerTypes();
+    }
+
+    @CrossOrigin(origins = "http://localhost:5173")
+    @PostMapping("/addFile")
+    public String addFile(@RequestParam("file") MultipartFile file, String path) {
+        FileController fileController = new FileController();
+        return fileController.addFile(path, file);
+    }
+
+    @CrossOrigin(origins = "http://localhost:5173")
+    @DeleteMapping("/removeFile")
+    public String removeFile(@RequestBody String file) {
+        FileController fileController = new FileController();
+        return fileController.removeFile(file);
+    }
+
+    @CrossOrigin(origins = "http://localhost:5173")
+    @PostMapping("/addDirectory")
+    public String addDirectory(@RequestBody AddDirectoryRequest addDirectoryRequest) {
+        FileController fileController = new FileController();
+        return fileController.addDirectory(addDirectoryRequest.getParentDirectory(), addDirectoryRequest.getDirectory());
+    }
+
+    @CrossOrigin(origins = "http://localhost:5173")
+    @DeleteMapping("/removeDirectory")
+    public String removeDirectory(@RequestBody RemoveDirectoryRequest removeDirectoryRequest) {
+        FileController fileController = new FileController();
+        return fileController.removeDirectory(removeDirectoryRequest.getDirectory());
     }
 }
