@@ -4,7 +4,9 @@ import org.json.simple.JSONObject;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class FileController {
     public static final File root = new File("FileDirectory");
@@ -46,17 +48,22 @@ public class FileController {
     }
 
     public String addFile(String path, MultipartFile file) {
-        if (!checkPath(path))
-            return "Invalid path";
-        Path destination = Path.of(path);
-        if(!destination.toFile().exists()) {
-            return "Path does not exist";
-        }
         try {
-            file.transferTo(destination);
-            return "File uploaded";
+            // Get the file bytes
+            byte[] bytes = file.getBytes();
+            Path filePath = Paths.get(new File(path + "/" + file.getOriginalFilename()).getPath());
+
+            if (Files.exists(filePath)) {
+                return "File already exists";
+            }
+
+            // Save the file to the specified path
+            Files.write(filePath, bytes);
+
+            return "File uploaded successfully!";
         } catch (Exception e) {
-            return "File upload failed";
+            e.printStackTrace();
+            return "Failed to upload file";
         }
     }
 

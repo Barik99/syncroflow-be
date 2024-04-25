@@ -118,7 +118,7 @@ public class APIController {
 
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/addFile")
-    public String addFile(@RequestParam("file") MultipartFile file, String path) {
+    public String addFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
         FileController fileController = new FileController();
         return fileController.addFile(path, file);
     }
