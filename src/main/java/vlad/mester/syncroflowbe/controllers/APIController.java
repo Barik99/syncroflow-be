@@ -45,6 +45,7 @@ public class APIController {
         return ruleController.getTriggersAsJson();
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/addRule/{email}")
     public String addRule(@PathVariable String email, @RequestBody String rule) {
         RuleController ruleController = RuleController.getInstance(email);
@@ -58,12 +59,14 @@ public class APIController {
         return ruleController.addTrigger(Triggers.fromJSONObject(trigger, email));
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/addAction/{email}")
     public String addAction(@PathVariable String email, @RequestBody String action) throws IOException {
         RuleController ruleController = RuleController.getInstance(email);
         return ruleController.addAction(Actions.fromJSONObject(action, email));
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @DeleteMapping("/removeRule/{email}/{name}")
     public String removeRule(@PathVariable String email, @PathVariable String name) {
         RuleController ruleController = RuleController.getInstance(email);
@@ -83,16 +86,22 @@ public class APIController {
         return ruleController.deleteActions(name);
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/schedulerStart/{email}/{interval}")
     public String startScheduler(@PathVariable String email, @PathVariable int interval) {
+        if (schedulers.containsKey(email))
+            return "Scheduler already started";
         Scheduler scheduler = new Scheduler(interval, email);
         scheduler.start();
         schedulers.put(email, scheduler);
         return "Scheduler started";
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/schedulerStop/{email}")
     public String stopScheduler(@PathVariable String email) {
+        if (!schedulers.containsKey(email))
+            return "Scheduler not started";
         schedulers.get(email).stop();
         schedulers.remove(email);
         return "Scheduler stopped";
@@ -114,6 +123,12 @@ public class APIController {
     @GetMapping("/triggerTypes")
     public String getTriggerTypes() {
         return Triggers.getAllTriggerTypes();
+    }
+
+    @CrossOrigin(origins = "http://localhost:5173")
+    @GetMapping("/actionTypes")
+    public String getActionTypes() {
+        return Actions.getAllActionTypes();
     }
 
     @CrossOrigin(origins = "http://localhost:5173")

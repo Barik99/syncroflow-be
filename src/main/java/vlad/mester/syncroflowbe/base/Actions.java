@@ -4,9 +4,12 @@ import lombok.Data;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import vlad.mester.syncroflowbe.Actions.*;
+import vlad.mester.syncroflowbe.Triggers.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Data
@@ -69,5 +72,17 @@ public abstract class Actions {
             default:
                 throw new IOException("Invalid action type");
         }
+    }
+
+    public static String getAllActionTypes() {
+        Map<String, Map<String, String>> actionsTypes = new HashMap<>();
+        actionsTypes.put(StartExternalProgram.type, Map.of("externalProgram", "String", "commandLineArguments", "String"));
+        actionsTypes.put(DeleteFile.type, Map.of("fileToDelete", "String"));
+        actionsTypes.put(MoveFile.type, Map.of("fileToMove", "String", "destinationPath", "String"));
+        actionsTypes.put(PasteFile.type, Map.of("fileToPaste", "String", "destinationPath", "String"));
+        actionsTypes.put(AppendStringToFile.type, Map.of("stringToAppend", "String", "file", "String"));
+        actionsTypes.put(CombinedActions.type, Map.of("firstAction", "String", "secondAction", "String"));
+
+        return new JSONObject(actionsTypes).toJSONString();
     }
 }

@@ -19,6 +19,7 @@ public class Scheduler implements RuleControllerObserver {
             while (!Thread.interrupted()) {
                 try {
                     Thread.sleep(interval * 1000);
+                    System.out.println("Checking rules");
                     checkRules();
                 } catch (InterruptedException e) {
                     // Thread interrupted, exit the loop
