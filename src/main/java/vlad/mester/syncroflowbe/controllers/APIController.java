@@ -14,6 +14,8 @@ import vlad.mester.syncroflowbe.base.Triggers;
 import vlad.mester.syncroflowbe.requests.RemoveDirectoryRequest;
 import vlad.mester.syncroflowbe.requests.RemoveFileRequest;
 import vlad.mester.syncroflowbe.services.LoginService;
+import xyz.capybara.clamav.ClamavClient;
+import xyz.capybara.clamav.commands.scan.result.ScanResult;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -135,7 +137,25 @@ public class APIController {
     @PostMapping("/addFile")
     public String addFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
         FileController fileController = new FileController();
-        return fileController.addFile(path, file);
+        try {
+            // Create a ClamAV client
+            ClamavClient clamavClient = new ClamavClient("localhost", 3310);
+
+            // Scan the file
+            ScanResult scanResult = clamavClient.scan(file.getInputStream());
+
+            // Check the scan result
+            if (scanResult.getStatus() == ScanResult.Status.OK) {
+                return fileController.addFile(path, file);
+            } else if (scanResult.getStatus() == ScanResult.Status.VIRUS_FOUND) {
+                return "File contains viruses";
+            } else {
+                return "Failed to scan file";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Failed to scan file";
+        }
     }
 
     @CrossOrigin(origins = "http://localhost:5173")
