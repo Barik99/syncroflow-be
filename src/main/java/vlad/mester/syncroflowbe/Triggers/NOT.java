@@ -12,7 +12,7 @@ public class NOT extends Triggers {
     public static final String type = "NOT";
 
     public NOT(String name, String trigger, String id) {
-        super(name, type, "NOT " + trigger);
+        super(name, type, "Nu " + trigger);
         this.trigger = trigger;
         this.ruleController = RuleController.getInstance(id);
     }

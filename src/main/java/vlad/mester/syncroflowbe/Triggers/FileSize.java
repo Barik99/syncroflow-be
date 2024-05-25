@@ -16,7 +16,7 @@ public class FileSize extends Triggers {
     public static final String type = "File Size";
 
     public FileSize(String name, File file, long sizeThreshold) {
-        super(name, type, file.getName() + "/Size Threshold " + sizeThreshold);
+        super(name, type, "Dimesiunea fișierului " + file.getAbsolutePath() + " este mai mare de " + sizeThreshold + " bytes");
         this.file = file;
         this.sizeThreshold = sizeThreshold;
     }

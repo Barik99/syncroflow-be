@@ -13,7 +13,7 @@ public class DayOfWeek extends Triggers {
     public static final String type = "Day Of Week";
 
     public DayOfWeek(String name, DaysOfWeekEnum daysOfWeek) {
-        super(name, type, "Day " + daysOfWeek.getDay());
+        super(name, type, "Ziua curentă este " + daysOfWeek.getDay());
         this.day = daysOfWeek.getDay();
     }
 

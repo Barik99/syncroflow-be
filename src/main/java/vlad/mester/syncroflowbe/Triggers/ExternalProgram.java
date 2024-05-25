@@ -15,8 +15,8 @@ public class ExternalProgram extends Triggers {
     public static final String type = "External Program";
 
     public ExternalProgram(String name, File externalProgram, String commandLineArguments, int exitStatus) {
-        super(name, type, "Program: " + externalProgram.getName() +
-                "/Arguments: " + commandLineArguments + "/Exit Status: " + exitStatus);
+        super(name, type, "Programul extern " + externalProgram.getAbsoluteFile() + " este executat cu argumentele "
+                + commandLineArguments + " și are exit status " + exitStatus);
         this.externalProgram = externalProgram;
         this.commandLineArguments = commandLineArguments;
         this.exitStatus = exitStatus;

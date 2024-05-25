@@ -13,7 +13,7 @@ public class TimeOfDay extends Triggers {
     public static final String type = "Time Of Day";
 
     public TimeOfDay(String name, int hours, int minutes) {
-        super(name, type, hours + ": " + minutes);
+        super(name, type, "Ora curentă este egală cu " + hours + ":" + minutes);
         this.hours = hours;
         this.minutes = minutes;
     }

@@ -15,7 +15,7 @@ public class AppendStringToFile extends Actions {
     public static final String type = "Append String To File";
 
     public AppendStringToFile(String name, String stringToAppend, File file) {
-        super(name, type, "File: " + file.getName() + "/message to append: " + stringToAppend);
+        super(name, type, "Adaugă șirul de caractere " + stringToAppend + " în fișierul " + file.getAbsolutePath());
         this.stringToAppend = stringToAppend;
         this.file = file;
     }

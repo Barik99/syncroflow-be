@@ -14,7 +14,7 @@ public class StartExternalProgram extends Actions {
     public static final String type = "Start External Program";
 
     public StartExternalProgram(String name, File externalProgram, String commandLineArguments) {
-        super(name, type, "File: " + externalProgram.getName() + "/CommandLineArguments: " + commandLineArguments);
+        super(name, type, "Pornește programul extern " + externalProgram.getAbsolutePath() + " cu argumentele " + commandLineArguments);
         this.externalProgram = externalProgram;
         this.commandLineArguments = commandLineArguments;
     }

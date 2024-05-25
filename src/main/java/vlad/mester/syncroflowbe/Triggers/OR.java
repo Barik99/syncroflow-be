@@ -13,7 +13,7 @@ public class OR extends Triggers {
     public static final String type = "OR";
 
     public OR(String name, String firstTrigger, String secondTrigger, String id) {
-        super(name, type, firstTrigger + " OR " + secondTrigger);
+        super(name, type,  firstTrigger + " sau " + secondTrigger );
         this.firstTrigger = firstTrigger;
         this.secondTrigger = secondTrigger;
         this.ruleController = RuleController.getInstance(id);
