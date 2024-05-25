@@ -51,7 +51,7 @@ public class RuleController {
     public static synchronized RuleController getInstance(String id) {
         try {
             if (!instance.containsKey(id) || instance.get(id) == null) {
-                throw new Exception("RuleController with id " + id + " does not exist");
+                throw new Exception("RuleController cu id-ul " + id + " nu există!");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,11 +88,11 @@ public class RuleController {
                 addUsedTrigger(rule.getTrigger());
                 addUsedAction(rule.getAction());
                 notifyObservers();
-                return "Rule added";
+                return "Regula a fost adăugată cu succes!";
             }
-            return "Rule could not be added";
+            return "Regula nu a putut fi adăugată";
         }
-        return "Rule already exists or trigger or action does not exist";
+        return "Regula există deja";
     }
 
     public boolean containsRule(Rule rule) {
@@ -150,11 +150,11 @@ public class RuleController {
                 removeUsedAction(rule.getAction());
                 rules.remove(rule);
                 notifyObservers();
-                return "Rule removed";
+                return "Regula a fost ștearsă cu succes!";
             }
-            return "Rule could not be removed";
+            return "Regula nu a putut fi ștearsă";
         }
-        return "Rule does not exist";
+        return "Regula nu există";
     }
 
     public Rule getRuleByName(String ruleName){
@@ -172,19 +172,19 @@ public class RuleController {
                 case AND.type:
                     AND and = (AND) trigger;
                     if (!triggers.containsKey(getTriggerByName(and.getFirstTrigger())) || !triggers.containsKey(getTriggerByName(and.getSecondTrigger()))) {
-                        return "Triggers do not exist";
+                        return "Declașatorul nu există";
                     }
                     break;
                 case OR.type:
                     OR or = (OR) trigger;
                     if (!triggers.containsKey(getTriggerByName(or.getFirstTrigger())) || !triggers.containsKey(getTriggerByName(or.getSecondTrigger()))) {
-                        return "Triggers do not exist";
+                        return "Declașatorul nu există";
                     }
                     break;
                 case NOT.type:
                     NOT not = (NOT) trigger;
                     if (!triggers.containsKey(getTriggerByName(not.getTrigger()))) {
-                        return "Trigger does not exist";
+                        return "Declașatorul nu există";
                     }
                     break;
             }
@@ -207,11 +207,11 @@ public class RuleController {
                 }
                 this.triggers.put(trigger, 0);
                 notifyObservers();
-                return "Trigger added";
+                return "Declașatorul a fost adăugat cu succes!";
             }
-            return "Trigger could not be added";
+            return "Declașatorul nu a putut fi adăugat";
         }
-        return "Trigger already exists";
+        return "Declașatorul există deja";
     }
 
     public String deleteTrigger(String triggerName) {
@@ -237,13 +237,13 @@ public class RuleController {
                     }
                     triggers.remove(trigger);
                     notifyObservers();
-                    return "Trigger removed";
+                    return "Declașatorul a fost șters cu succes!";
                 }
-                return "Trigger could not be removed";
+                return "Declașatorul nu a putut fi șters";
             }
-            return "Trigger is used in a rule or in another trigger";
+            return "Declașatorul este folosit într-o regulă";
         }
-        return "Trigger does not exist";
+        return "Declașatorul nu există";
     }
 
     public String addAction(Actions action) {
@@ -251,7 +251,7 @@ public class RuleController {
             if (action.getType().equals(CombinedActions.type)) {
                 CombinedActions combinedActions = (CombinedActions) action;
                 if (!actions.containsKey(getActionByName(combinedActions.getFirstAction())) || !actions.containsKey(getActionByName(combinedActions.getSecondAction()))) {
-                    return "Actions do not exist";
+                    return "Acțiunea nu există";
                 }
             }
             if (actionService.addAction(action, id)) {
@@ -262,11 +262,11 @@ public class RuleController {
                 }
                 this.actions.put(action, 0);
                 notifyObservers();
-                return "Action added";
+                return "Acțiunea a fost adăugată cu succes!";
             }
-            return "Action could not be added";
+            return "Acțiunea nu a putut fi adăugată";
         }
-        return "Action already exists";
+        return "Acțiunea există deja";
     }
 
     public String deleteActions(String actionName) {
@@ -281,13 +281,13 @@ public class RuleController {
                     }
                     actions.remove(action);
                     notifyObservers();
-                    return "Action removed";
+                    return "Acțiunea a fost ștearsă cu succes!";
                 }
-                return "Action could not be removed";
+                return "Acțiunea nu a putut fi ștearsă";
             }
-            return "Action is used in a rule or in another action";
+            return "Acțiunea este folosită într-o regulă";
         }
-        return "Action does not exist";
+        return "Acțiunea nu există";
     }
 
     public Triggers getTriggerByName(String triggerName){

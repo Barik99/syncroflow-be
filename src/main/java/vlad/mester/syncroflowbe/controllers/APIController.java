@@ -92,21 +92,21 @@ public class APIController {
     @PostMapping("/schedulerStart/{email}/{interval}")
     public String startScheduler(@PathVariable String email, @PathVariable int interval) {
         if (schedulers.containsKey(email))
-            return "Scheduler already started";
+            return "Planificatorul deja a fost pornit.";
         Scheduler scheduler = new Scheduler(interval, email);
         scheduler.start();
         schedulers.put(email, scheduler);
-        return "Scheduler started";
+        return "Planificator a pornit cu succes!";
     }
 
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/schedulerStop/{email}")
     public String stopScheduler(@PathVariable String email) {
         if (!schedulers.containsKey(email))
-            return "Scheduler not started";
+            return "Planificatorul nu a fost pornit.";
         schedulers.get(email).stop();
         schedulers.remove(email);
-        return "Scheduler stopped";
+        return "Planificator a fost oprit cu succes!";
     }
 
     @CrossOrigin(origins = "http://localhost:5173")
@@ -148,13 +148,13 @@ public class APIController {
             if (scanResult.getStatus() == ScanResult.Status.OK) {
                 return fileController.addFile(path, file);
             } else if (scanResult.getStatus() == ScanResult.Status.VIRUS_FOUND) {
-                return "File contains viruses";
+                return "Fișierul conține un virus";
             } else {
-                return "Failed to scan file";
+                return "Nu s-a putut scana fișierul";
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "Failed to scan file";
+            return "Fișierul nu a putut fi adăugat";
         }
     }
 
