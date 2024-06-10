@@ -13,17 +13,13 @@ import java.util.List;
 
 @Service
 public class TriggerService {
-    private static final String url = "jdbc:postgresql://localhost:5432/syncroflowdb";
-    // Database credentials
-    private static final String username = "postgres";
-    private static final String password = "admin";
 
     public boolean addTrigger(Triggers trigger, String email) {
         if (checkIfTriggerExists(trigger.getName())) {
             return true;
         }
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
+            Connection connection = DriverManager.getConnection(DataBase.URL.toString(), DataBase.USERNAME.toString(), DataBase.PASSWORD.toString());
             List<PreparedStatement> preparedStatement = prepareStatementTrigger(trigger, connection, email);
             for (PreparedStatement statement : preparedStatement) {
                 statement.executeUpdate();
@@ -113,7 +109,7 @@ public class TriggerService {
 
     public boolean deleteTrigger(String triggerName) {
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
+            Connection connection = DriverManager.getConnection(DataBase.URL.toString(), DataBase.USERNAME.toString(), DataBase.PASSWORD.toString());
             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM triggers WHERE name = ?");
             preparedStatement.setString(1, triggerName);
             preparedStatement.executeUpdate();
@@ -127,7 +123,7 @@ public class TriggerService {
 
     public boolean checkIfTriggerExists(String triggerName) {
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
+            Connection connection = DriverManager.getConnection(DataBase.URL.toString(), DataBase.USERNAME.toString(), DataBase.PASSWORD.toString());
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM triggers WHERE name = ?");
             preparedStatement.setString(1, triggerName);
             preparedStatement.executeQuery();

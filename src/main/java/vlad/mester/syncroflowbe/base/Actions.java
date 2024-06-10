@@ -39,11 +39,6 @@ public abstract class Actions {
 
     public abstract boolean execute();
 
-    public boolean isActionUsedIn(){
-        boolean result = false;
-        return result;
-    }
-
     public JSONObject getJSONObject() {
         JSONObject action = new JSONObject();
         action.put("name", this.name);

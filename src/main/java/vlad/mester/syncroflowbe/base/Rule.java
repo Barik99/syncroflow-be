@@ -48,7 +48,6 @@ public class Rule {
         return false;
     }
 
-    //make a method that returns a JSON object with the rule's fields
     public JSONObject getJSONObject() {
         JSONObject rule = new JSONObject();
         rule.put("name", this.name);
@@ -61,7 +60,6 @@ public class Rule {
         return rule;
     }
 
-    //make a method that creates a Rule from json
     public static Rule fromJSONObject(String jsonRule) {
         JSONObject rule = (JSONObject) JSONValue.parse(jsonRule);
         return new Rule(
