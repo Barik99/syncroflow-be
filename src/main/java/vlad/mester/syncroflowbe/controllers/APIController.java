@@ -111,7 +111,7 @@ public class APIController {
 
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/register/{email}/{password}")
-    public boolean register(@PathVariable String email, @PathVariable String password) {
+    public String register(@PathVariable String email, @PathVariable String password) {
         return LoginService.register(email, password);
     }
 
