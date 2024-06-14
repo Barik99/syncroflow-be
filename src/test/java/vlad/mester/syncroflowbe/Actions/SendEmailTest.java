@@ -11,7 +11,7 @@ public class SendEmailTest {
 
     @BeforeEach
     public void setUp() {
-        this.sendEmail = new SendEmail("name", "vladi.mester@gmail.com", "Test vlad", "Ozzie is the best!");
+        this.sendEmail = new SendEmail("name", "vladi.mester@gmail.com", "vladi.mester@gmail.com", "Ozzie is the best!");
     }
 
     @Test

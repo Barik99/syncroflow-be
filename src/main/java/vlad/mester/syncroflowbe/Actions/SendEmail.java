@@ -16,7 +16,6 @@ import java.util.Properties;
 @Getter
 public class SendEmail extends Actions {
     public static final String type = "Send Email";
-    private final String sender = "syncroflowsystem@gmail.com";
     private final String receiver;
     private final String subject;
     private final String body;
@@ -32,7 +31,7 @@ public class SendEmail extends Actions {
     public boolean execute() {
         String host = "smtp.office365.com";
         String port = "587";
-        String username = "syncroflowsystem@outlook.com";
+        String username = "systemsyncroflow@outlook.com";
         String password = "Montagne@4321#!!!";
         try {
             Properties properties = new Properties();
@@ -64,6 +63,11 @@ public class SendEmail extends Actions {
             Transport.send(msg);
             System.out.println("Email sent successfully.");
             return true;
+        } catch (com.sun.mail.smtp.SMTPSendFailedException e) {
+            e.printStackTrace();
+            // Implement your retry mechanism or logging here.
+
+            return false;
         } catch (jakarta.mail.MessagingException e) {
             e.printStackTrace();
             return false;

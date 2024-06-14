@@ -387,6 +387,24 @@ public class LoadRuleControllerService {
                     e.printStackTrace();
                 }
                 return startExternalProgram;
+            case SendEmail.type:
+                SendEmail sendEmail = null;
+                try {
+                    Connection connection = DriverManager.getConnection(DataBase.URL.toString(), DataBase.USERNAME.toString(), DataBase.PASSWORD.toString());
+                    PreparedStatement statement = connection.prepareStatement("SELECT * FROM sendemail_action WHERE name = ?");
+                    statement.setString(1, name);
+                    ResultSet resultSet = statement.executeQuery();
+                    if (resultSet.next()) {
+                        String receiver = resultSet.getString("receiver");
+                        String subject = resultSet.getString("subject");
+                        String body = resultSet.getString("body");
+                        sendEmail = new SendEmail(name, receiver, subject, body);
+                    }
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                return sendEmail;
             default:
                 return null;
         }
