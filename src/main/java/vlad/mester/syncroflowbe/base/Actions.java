@@ -64,6 +64,8 @@ public abstract class Actions {
                 return new AppendStringToFile(name, (String) action.get("stringToAppend"), new File((String) action.get("file")));
             case CombinedActions.type:
                 return new CombinedActions(name, (String) action.get("firstAction"), (String) action.get("secondAction"), id);
+            case SendEmail.type:
+                return new SendEmail(name, (String) action.get("receiver"), (String) action.get("subject"), (String) action.get("body"));
             default:
                 throw new IOException("Invalid action type");
         }
@@ -77,7 +79,7 @@ public abstract class Actions {
         actionsTypes.put(PasteFile.type, Map.of("fileToPaste", "String", "destinationPath", "String"));
         actionsTypes.put(AppendStringToFile.type, Map.of("stringToAppend", "String", "file", "String"));
         actionsTypes.put(CombinedActions.type, Map.of("firstAction", "String", "secondAction", "String"));
-
+        actionsTypes.put(SendEmail.type, Map.of("receiver", "String", "subject", "String", "body", "String"));
         return new JSONObject(actionsTypes).toJSONString();
     }
 }

@@ -7,6 +7,7 @@ import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.Getter;
+import org.json.simple.JSONObject;
 import vlad.mester.syncroflowbe.base.Actions;
 
 import java.util.Properties;
@@ -69,11 +70,12 @@ public class SendEmail extends Actions {
         }
     }
 
-//    @Override
-//    public JSONObject getJSONObject() {
-//        JSONObject action = super.getJSONObject();
-//        action.put("fileToMove", this.fileToMove.getAbsolutePath());
-//        action.put("destinationPath", this.destinationPath.getAbsolutePath());
-//        return action;
-//    }
+    @Override
+    public JSONObject getJSONObject() {
+        JSONObject action = super.getJSONObject();
+        action.put("receiver", this.receiver);
+        action.put("subject", this.subject);
+        action.put("body", this.body);
+        return action;
+    }
 }

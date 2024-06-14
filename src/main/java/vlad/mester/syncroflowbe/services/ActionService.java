@@ -85,6 +85,14 @@ public class ActionService {
                 typeActionPreparedStatement.setString(2, combinedAction.getFirstAction());
                 typeActionPreparedStatement.setString(3, combinedAction.getSecondAction());
                 break;
+            case SendEmail.type:
+                SendEmail sendEmail = (SendEmail) action;
+                typeActionPreparedStatement = connection.prepareStatement("INSERT INTO sendemail_action (name, receiver, subject, body) VALUES (?, ?, ?, ?)");
+                typeActionPreparedStatement.setString(1, sendEmail.getName());
+                typeActionPreparedStatement.setString(2, sendEmail.getReceiver());
+                typeActionPreparedStatement.setString(3, sendEmail.getSubject());
+                typeActionPreparedStatement.setString(4, sendEmail.getBody());
+                break;
         }
         preparedStatement.add(typeActionPreparedStatement);
         return preparedStatement;
