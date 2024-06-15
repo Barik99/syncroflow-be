@@ -1,5 +1,7 @@
 package vlad.mester.syncroflowbe.services;
 
+import vlad.mester.syncroflowbe.RuleController;
+
 import java.sql.*;
 
 public class LoginService {
@@ -35,6 +37,13 @@ public class LoginService {
                 preparedStatement.setString(1, email);
                 preparedStatement.setString(2, password);
                 preparedStatement.executeUpdate();
+
+                // After successful registration, create a new RuleController instance
+                RuleController ruleController = RuleController.createInstance(email);
+
+                // Add the new RuleController instance to the map
+                RuleControllerManager.ruleControllers.put(email, ruleController);
+
                 connection.close();
                 return "Contul a fost creat cu succes!";
             }
