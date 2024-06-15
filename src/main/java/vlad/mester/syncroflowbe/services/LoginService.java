@@ -6,22 +6,22 @@ import java.sql.*;
 
 public class LoginService {
 
-    public static boolean login(String email, String password) {
+    public static String login(String email, String password) {
         try {
             Connection connection = DriverManager.getConnection(DataBase.URL.toString(), DataBase.USERNAME.toString(), DataBase.PASSWORD.toString());
             PreparedStatement preparedStatement = prepareStatementUserAccount(email, password, connection);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 connection.close();
-                return true;
+                return "Autentificare reușită!";
             }else {
                 connection.close();
-                return false;
+                return "Email sau parolă incorectă!";
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return "A apărut o eroare la autentificare.";
         }
-        return false;
     }
 
     public static String register(String email, String password) {
