@@ -13,76 +13,74 @@ public class FileController {
 
     public String addDirectory(String path, String name) {
         if (!checkPath(path))
-            return "Invalid path";
+            return "Calea nu este validă!";
         File file = new File(path + "/" + name);
         if (!file.exists()) {
             if (file.mkdir()){
-                return "Directory created";
+                return "Folderul a fost creat cu succes!";
             }
-            return "Directory could not be created";
+            return "Eroare la crearea folderului!";
         }
-        return "Directory already exists" + file.getPath();
+        return "Folderul deja există: " + file.getPath();
     }
 
     public String removeDirectory(String path) {
         if (!checkPath(path))
-            return "Invalid path";
+            return "Calea nu este validă!";
         File file = new File(path);
         if(!file.exists())
-            return "Directory does not exist";
+            return "Folderul nu există";
         if(!file.isDirectory()) {
-            return "Path is not a directory";
+            return "Calea nu este un folder!";
         }
         if(file.list().length > 0) {
-            return "Directory is not empty";
+            return "Folderul nu este gol!";
         }
         for (RuleController ruleController : RuleController.getAllInstances()) {
             if (ruleController.directoryIsUsed(file)) {
-                return "Directory is used";
+                return "Folderul este folosit!";
             }
         }
         if (file.getPath().equals(root.getPath()))
-            return "Cannot delete root directory";
+            return "Nu se poate șterge folderul principal!";
         file.delete();
-        return "Directory deleted";
+        return "Folderul a fost șters cu succes!";
     }
 
     public String addFile(String path, MultipartFile file) {
         try {
-            // Get the file bytes
             byte[] bytes = file.getBytes();
             Path filePath = Paths.get(new File(path + "/" + file.getOriginalFilename()).getPath());
 
             if (Files.exists(filePath)) {
-                return "File already exists";
+                return "Fișierul există deja!";
             }
 
-            // Save the file to the specified path
             Files.write(filePath, bytes);
 
-            return "File uploaded successfully!";
+            return "Fișierul a fost încărcat cu succes!";
         } catch (Exception e) {
             e.printStackTrace();
-            return "Failed to upload file";
+            return "Fișierul nu a putut fi încărcat!";
         }
     }
 
     public String removeFile(String path) {
         if (!checkPath(path))
-            return "Invalid path";
+            return "Calea nu este validă!";
         File file = new File(path);
         if(!file.exists())
-            return "File does not exist";
+            return "Fișierul nu există!";
         if(file.isDirectory()) {
-            return "Path is a directory";
+            return "Calea nu este un fișier!";
         }
         for (RuleController ruleController : RuleController.getAllInstances()) {
             if (ruleController.fileIsUsed(file)) {
-                return "File is used";
+                return "Fișierul este folosit!";
             }
         }
         file.delete();
-        return "File deleted";
+        return "Fișierul a fost șters cu succes!";
     }
 
     public boolean checkPath(String path) {

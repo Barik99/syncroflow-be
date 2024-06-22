@@ -14,7 +14,7 @@ public class FileExistence extends Triggers {
     public static final String type = "File Existence";
 
     public FileExistence(String name, File file) {
-        super(name, type, "File: " + file.getName() + "/Directory: " + file.getAbsoluteFile());
+        super(name, type, "Fișierul " + file.getName() + " există în folderul " + file.getAbsoluteFile());
         this.file = file;
     }
 

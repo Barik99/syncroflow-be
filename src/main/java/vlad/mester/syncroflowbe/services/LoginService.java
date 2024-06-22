@@ -1,47 +1,57 @@
 package vlad.mester.syncroflowbe.services;
 
+import vlad.mester.syncroflowbe.RuleController;
+
 import java.sql.*;
 
 public class LoginService {
 
-    public static boolean login(String email, String password) {
+    public static String login(String email, String password) {
         try {
             Connection connection = DriverManager.getConnection(DataBase.URL.toString(), DataBase.USERNAME.toString(), DataBase.PASSWORD.toString());
             PreparedStatement preparedStatement = prepareStatementUserAccount(email, password, connection);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 connection.close();
-                return true;
+                return "Autentificare reușită!";
             }else {
                 connection.close();
-                return false;
+                return "Email sau parolă incorectă!";
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return "A apărut o eroare la autentificare.";
         }
-        return false;
     }
 
-    public static boolean register(String email, String password) {
+    public static String register(String email, String password) {
         try {
             Connection connection = DriverManager.getConnection(DataBase.URL.toString(), DataBase.USERNAME.toString(), DataBase.PASSWORD.toString());
             PreparedStatement preparedStatement = prepareStatementUserAccount(email, password, connection);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 connection.close();
-                return false;
-            }else {
+                return "Există deja un cont cu acest email!";
+            } else {
                 preparedStatement = connection.prepareStatement("INSERT INTO person (email, password_hash) VALUES (?, ?)");
                 preparedStatement.setString(1, email);
                 preparedStatement.setString(2, password);
                 preparedStatement.executeUpdate();
+
+                RuleController ruleController = RuleController.createInstance(email);
+
+                RuleControllerManager.ruleControllers.put(email, ruleController);
+
                 connection.close();
-                return true;
+                return "Contul a fost creat cu succes!";
             }
         } catch (SQLException e) {
+            if (e.getMessage().contains("duplicate key value violates unique constraint")) {
+                return "Există deja un cont creat pe acest email!";
+            }
             e.printStackTrace();
+            return "A apărut o eroare la înregistrare.";
         }
-        return false;
     }
 
     private static PreparedStatement prepareStatementUserAccount(String email, String password, Connection connection) throws SQLException {

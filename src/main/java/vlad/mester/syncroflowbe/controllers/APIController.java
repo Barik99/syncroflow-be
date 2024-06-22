@@ -14,6 +14,8 @@ import vlad.mester.syncroflowbe.base.Triggers;
 import vlad.mester.syncroflowbe.requests.RemoveDirectoryRequest;
 import vlad.mester.syncroflowbe.requests.RemoveFileRequest;
 import vlad.mester.syncroflowbe.services.LoginService;
+import xyz.capybara.clamav.ClamavClient;
+import xyz.capybara.clamav.commands.scan.result.ScanResult;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -45,6 +47,7 @@ public class APIController {
         return ruleController.getTriggersAsJson();
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/addRule/{email}")
     public String addRule(@PathVariable String email, @RequestBody String rule) {
         RuleController ruleController = RuleController.getInstance(email);
@@ -58,12 +61,14 @@ public class APIController {
         return ruleController.addTrigger(Triggers.fromJSONObject(trigger, email));
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/addAction/{email}")
     public String addAction(@PathVariable String email, @RequestBody String action) throws IOException {
         RuleController ruleController = RuleController.getInstance(email);
         return ruleController.addAction(Actions.fromJSONObject(action, email));
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @DeleteMapping("/removeRule/{email}/{name}")
     public String removeRule(@PathVariable String email, @PathVariable String name) {
         RuleController ruleController = RuleController.getInstance(email);
@@ -83,30 +88,36 @@ public class APIController {
         return ruleController.deleteActions(name);
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/schedulerStart/{email}/{interval}")
     public String startScheduler(@PathVariable String email, @PathVariable int interval) {
+        if (schedulers.containsKey(email))
+            return "Planificatorul deja a fost pornit.";
         Scheduler scheduler = new Scheduler(interval, email);
         scheduler.start();
         schedulers.put(email, scheduler);
-        return "Scheduler started";
+        return "Planificator a pornit cu succes!";
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/schedulerStop/{email}")
     public String stopScheduler(@PathVariable String email) {
+        if (!schedulers.containsKey(email))
+            return "Planificatorul nu a fost pornit.";
         schedulers.get(email).stop();
         schedulers.remove(email);
-        return "Scheduler stopped";
+        return "Planificator a fost oprit cu succes!";
     }
 
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/register/{email}/{password}")
-    public boolean register(@PathVariable String email, @PathVariable String password) {
+    public String register(@PathVariable String email, @PathVariable String password) {
         return LoginService.register(email, password);
     }
 
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/login/{email}/{password}")
-    public boolean login(@PathVariable String email, @PathVariable String password) {
+    public String login(@PathVariable String email, @PathVariable String password) {
         return LoginService.login(email, password);
     }
 
@@ -117,10 +128,31 @@ public class APIController {
     }
 
     @CrossOrigin(origins = "http://localhost:5173")
+    @GetMapping("/actionTypes")
+    public String getActionTypes() {
+        return Actions.getAllActionTypes();
+    }
+
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/addFile")
     public String addFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
         FileController fileController = new FileController();
-        return fileController.addFile(path, file);
+        try {
+            ClamavClient clamavClient = new ClamavClient("localhost", 3310);
+
+            ScanResult scanResult = clamavClient.scan(file.getInputStream());
+
+            if (scanResult.getStatus() == ScanResult.Status.OK) {
+                return fileController.addFile(path, file);
+            } else if (scanResult.getStatus() == ScanResult.Status.VIRUS_FOUND) {
+                return "Fișierul conține un virus";
+            } else {
+                return "Nu s-a putut scana fișierul";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Fișierul nu a putut fi adăugat";
+        }
     }
 
     @CrossOrigin(origins = "http://localhost:5173")

@@ -13,18 +13,13 @@ import java.util.List;
 
 @Service
 public class ActionService {
-    // Database URL
-    private static final String url = "jdbc:postgresql://localhost:5432/syncroflowdb";
-    // Database credentials
-    private static final String username = "postgres";
-    private static final String password = "admin";
 
     public boolean addAction(Actions action, String email) {
         if (checkIfActionExists(action.getName())) {
             return true;
         }
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
+            Connection connection = DriverManager.getConnection(DataBase.URL.toString(), DataBase.USERNAME.toString(), DataBase.PASSWORD.toString());
             List<PreparedStatement> preparedStatement = prepareStatementAction(action, connection, email);
             for (PreparedStatement statement : preparedStatement) {
                 statement.executeUpdate();
@@ -37,7 +32,6 @@ public class ActionService {
         return false;
     }
 
-    // create a function that gets as input an action and returns the SQL string used to insert the action in the database based on the type of the action
     private List<PreparedStatement> prepareStatementAction(Actions action, Connection connection, String email) throws SQLException {
         List<PreparedStatement> preparedStatement = new ArrayList<>();
         PreparedStatement actionPreparedStatement = connection.prepareStatement("INSERT INTO actions (name, type, value, creator_email) VALUES (?, ?, ?, ?)");
@@ -89,6 +83,14 @@ public class ActionService {
                 typeActionPreparedStatement.setString(2, combinedAction.getFirstAction());
                 typeActionPreparedStatement.setString(3, combinedAction.getSecondAction());
                 break;
+            case SendEmail.type:
+                SendEmail sendEmail = (SendEmail) action;
+                typeActionPreparedStatement = connection.prepareStatement("INSERT INTO sendemail_action (name, receiver, subject, body) VALUES (?, ?, ?, ?)");
+                typeActionPreparedStatement.setString(1, sendEmail.getName());
+                typeActionPreparedStatement.setString(2, sendEmail.getReceiver());
+                typeActionPreparedStatement.setString(3, sendEmail.getSubject());
+                typeActionPreparedStatement.setString(4, sendEmail.getBody());
+                break;
         }
         preparedStatement.add(typeActionPreparedStatement);
         return preparedStatement;
@@ -96,7 +98,7 @@ public class ActionService {
 
     public boolean deleteAction(String actionName) {
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
+            Connection connection = DriverManager.getConnection(DataBase.URL.toString(), DataBase.USERNAME.toString(), DataBase.PASSWORD.toString());
             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM actions WHERE name = ?");
             preparedStatement.setString(1, actionName);
             preparedStatement.executeUpdate();
@@ -110,7 +112,7 @@ public class ActionService {
 
     public boolean checkIfActionExists(String actionName) {
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
+            Connection connection = DriverManager.getConnection(DataBase.URL.toString(), DataBase.USERNAME.toString(), DataBase.PASSWORD.toString());
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM actions WHERE name = ?");
             preparedStatement.setString(1, actionName);
             return preparedStatement.executeQuery().next();

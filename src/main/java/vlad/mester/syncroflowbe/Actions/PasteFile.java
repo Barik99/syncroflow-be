@@ -16,7 +16,7 @@ public class PasteFile extends Actions {
     public static final String type = "Paste File";
 
     public PasteFile(String name, File fileToPaste, File destinationPath) {
-        super(name, type, "File: " + fileToPaste.getName() + "/DestinationPath: " + destinationPath.getAbsolutePath());
+        super(name, type, "Lipește fișierul " + fileToPaste.getAbsolutePath() + " în folderul " + destinationPath.getName());
         this.fileToPaste = fileToPaste;
         this.destinationPath = destinationPath;
     }

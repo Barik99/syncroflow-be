@@ -13,7 +13,7 @@ public class CombinedActions extends Actions {
     public static final String type = "Combined Actions";
 
     public CombinedActions(String name, String firstAction, String secondAction, String id) {
-        super(name, type, firstAction + " + " + secondAction);
+        super(name, type, "Execută acțiunea " + secondAction + " și apoi acțiunea " + firstAction);
         this.firstAction = firstAction;
         this.secondAction = secondAction;
         this.ruleController = RuleController.getInstance(id);

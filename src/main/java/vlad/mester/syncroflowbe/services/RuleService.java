@@ -24,20 +24,6 @@ public class RuleService {
         return false;
     }
 
-    private PreparedStatement prepareStatementRule(Rule rule, Connection connection, String email) throws SQLException {
-        PreparedStatement preparedStatement = null;
-        preparedStatement = connection.prepareStatement("INSERT INTO rule (name, trigger_name, action_name, multiuse, lastuse, sleeptime, active, creator_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        preparedStatement.setString(1, rule.getName());
-        preparedStatement.setString(2, rule.getTrigger());
-        preparedStatement.setString(3, rule.getAction());
-        preparedStatement.setBoolean(4, rule.isMultiUse());
-        preparedStatement.setDate(5, (Date) rule.getLastUse());
-        preparedStatement.setInt(6, rule.getSleepTime());
-        preparedStatement.setBoolean(7, rule.isActive());
-        preparedStatement.setString(8, email);
-        return preparedStatement;
-    }
-
     public boolean deleteRule(String ruleName) {
         try {
             Connection connection = DriverManager.getConnection(DataBase.URL.toString(), DataBase.USERNAME.toString(), DataBase.PASSWORD.toString());
@@ -64,5 +50,19 @@ public class RuleService {
             e.printStackTrace();
         }
         return true;
+    }
+
+    private PreparedStatement prepareStatementRule(Rule rule, Connection connection, String email) throws SQLException {
+        PreparedStatement preparedStatement = null;
+        preparedStatement = connection.prepareStatement("INSERT INTO rule (name, trigger_name, action_name, multiuse, lastuse, sleeptime, active, creator_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        preparedStatement.setString(1, rule.getName());
+        preparedStatement.setString(2, rule.getTrigger());
+        preparedStatement.setString(3, rule.getAction());
+        preparedStatement.setBoolean(4, rule.isMultiUse());
+        preparedStatement.setDate(5, (Date) rule.getLastUse());
+        preparedStatement.setInt(6, rule.getSleepTime());
+        preparedStatement.setBoolean(7, rule.isActive());
+        preparedStatement.setString(8, email);
+        return preparedStatement;
     }
 }

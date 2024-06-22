@@ -16,7 +16,7 @@ public class MoveFile extends Actions {
     public static final String type = "Move File";
 
     public MoveFile(String name, File fileToMove, File destinationPath) {
-        super(name, type, "File: " + fileToMove.getName() + "/DestinationPath: " + destinationPath.getAbsolutePath());
+        super(name, type, "Mută fișierul " + fileToMove.getAbsoluteFile() + " în folderul " + destinationPath.getName());
         this.fileToMove = fileToMove;
         this.destinationPath = destinationPath;
     }

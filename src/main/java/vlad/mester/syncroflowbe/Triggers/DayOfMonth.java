@@ -12,7 +12,7 @@ public class DayOfMonth extends Triggers {
     public static final String type = "Day Of Month";
 
     public DayOfMonth(String name, int day) {
-        super(name, type, "Day " + day);
+        super(name, type, "Ziua curentă este " + day);
         this.day = day;
     }
 

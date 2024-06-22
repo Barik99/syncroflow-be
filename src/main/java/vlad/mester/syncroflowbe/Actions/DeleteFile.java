@@ -12,7 +12,7 @@ public class DeleteFile extends Actions {
     public static final String type = "Delete File";
 
     public DeleteFile(String name, File fileToDelete) {
-        super(name, type, "File: " + fileToDelete.getName());
+        super(name, type, "Șterge fișierul " + fileToDelete.getAbsolutePath());
         this.fileToDelete = fileToDelete;
     }
 
