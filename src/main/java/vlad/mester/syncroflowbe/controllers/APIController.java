@@ -138,13 +138,10 @@ public class APIController {
     public String addFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
         FileController fileController = new FileController();
         try {
-            //creaza un client pentru clamav
             ClamavClient clamavClient = new ClamavClient("localhost", 3310);
 
-            //scanare fisier
             ScanResult scanResult = clamavClient.scan(file.getInputStream());
 
-            //verifica rezultatul scanarii
             if (scanResult.getStatus() == ScanResult.Status.OK) {
                 return fileController.addFile(path, file);
             } else if (scanResult.getStatus() == ScanResult.Status.VIRUS_FOUND) {

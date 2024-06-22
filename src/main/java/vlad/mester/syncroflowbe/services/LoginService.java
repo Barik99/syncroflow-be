@@ -38,10 +38,8 @@ public class LoginService {
                 preparedStatement.setString(2, password);
                 preparedStatement.executeUpdate();
 
-                // After successful registration, create a new RuleController instance
                 RuleController ruleController = RuleController.createInstance(email);
 
-                // Add the new RuleController instance to the map
                 RuleControllerManager.ruleControllers.put(email, ruleController);
 
                 connection.close();

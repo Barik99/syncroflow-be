@@ -4,7 +4,6 @@ import lombok.Data;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import vlad.mester.syncroflowbe.Actions.*;
-import vlad.mester.syncroflowbe.Triggers.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,44 +13,21 @@ import java.util.Map;
 
 @Data
 public abstract class Actions {
-    private String name; // This is a string that contains the name of the action. It can be "Start Notepad", "Delete File", etc.
-    private String type; // This is a string that contains the type of the action. It can be "StartExternalProgram", "DeleteFile", etc.
-    private String value; // This is a string that contains the value of the action. It can be a file path, a command line argument, etc.
+    private String name;
+    private String type;
+    private String value;
 
-    public Actions(String name, String type, String value){
+    public Actions(String name, String type, String value) {
         this.name = name;
         this.type = type;
         this.value = value;
-    }
-
-    @Override
-    public String toString() {
-        return this.name;
-    }
-
-    @Override
-    public boolean equals(Object object){
-        if(object instanceof Actions actions){
-            return this.name.equals(actions.name);
-        }
-        return false;
-    }
-
-    public abstract boolean execute();
-
-    public JSONObject getJSONObject() {
-        JSONObject action = new JSONObject();
-        action.put("name", this.name);
-        action.put("type", this.type);
-        action.put("value", this.value);
-        return action;
     }
 
     public static Actions fromJSONObject(String jsonAction, String id) throws IOException {
         JSONObject action = (JSONObject) JSONValue.parse(jsonAction);
         String name = (String) action.get("name");
         String type = (String) action.get("type");
-        switch (type){
+        switch (type) {
             case StartExternalProgram.type:
                 return new StartExternalProgram(name, new File((String) action.get("externalProgram")), (String) action.get("commandLineArguments"));
             case DeleteFile.type:
@@ -81,5 +57,28 @@ public abstract class Actions {
         actionsTypes.put(CombinedActions.type, Map.of("firstAction", "String", "secondAction", "String"));
         actionsTypes.put(SendEmail.type, Map.of("receiver", "String", "subject", "String", "body", "String"));
         return new JSONObject(actionsTypes).toJSONString();
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof Actions actions) {
+            return this.name.equals(actions.name);
+        }
+        return false;
+    }
+
+    public abstract boolean execute();
+
+    public JSONObject getJSONObject() {
+        JSONObject action = new JSONObject();
+        action.put("name", this.name);
+        action.put("type", this.type);
+        action.put("value", this.value);
+        return action;
     }
 }

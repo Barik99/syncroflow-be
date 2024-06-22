@@ -49,7 +49,6 @@ public class FileController {
 
     public String addFile(String path, MultipartFile file) {
         try {
-            // Get the file bytes
             byte[] bytes = file.getBytes();
             Path filePath = Paths.get(new File(path + "/" + file.getOriginalFilename()).getPath());
 
@@ -57,7 +56,6 @@ public class FileController {
                 return "Fișierul există deja!";
             }
 
-            // Save the file to the specified path
             Files.write(filePath, bytes);
 
             return "Fișierul a fost încărcat cu succes!";

@@ -40,7 +40,6 @@ public class SendEmail extends Actions {
             properties.put("mail.smtp.auth", "true");
             properties.put("mail.smtp.starttls.enable", "true");
 
-            // Create a session with an authenticator.
             Authenticator auth = new Authenticator() {
                 public jakarta.mail.PasswordAuthentication getPasswordAuthentication() {
                     return new jakarta.mail.PasswordAuthentication(username, password);
@@ -49,23 +48,20 @@ public class SendEmail extends Actions {
 
             Session session = Session.getInstance(properties, auth);
 
-            // Create a new email message.
             Message msg = new MimeMessage(session);
 
             msg.setFrom(new InternetAddress(username));
-            InternetAddress[] toAddresses = { new InternetAddress(receiver) };
+            InternetAddress[] toAddresses = {new InternetAddress(receiver)};
             msg.setRecipients(Message.RecipientType.TO, toAddresses);
             msg.setSubject(subject);
             msg.setSentDate(new java.util.Date());
             msg.setText(body);
 
-            // Send the email.
             Transport.send(msg);
             System.out.println("Email sent successfully.");
             return true;
         } catch (com.sun.mail.smtp.SMTPSendFailedException e) {
             e.printStackTrace();
-            // Implement your retry mechanism or logging here.
 
             return false;
         } catch (jakarta.mail.MessagingException e) {

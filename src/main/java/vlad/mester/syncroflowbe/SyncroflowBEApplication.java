@@ -10,7 +10,6 @@ import java.io.File;
 
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
-@EnableWebSecurity
 public class SyncroflowBEApplication {
 
     public static void main(String[] args) {

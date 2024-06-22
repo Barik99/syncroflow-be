@@ -13,7 +13,7 @@ public class AND extends Triggers {
     public static final String type = "AND";
 
     public AND(String name, String firstTrigger, String secondTrigger, String id) {
-        super(name, type, firstTrigger + " și " + secondTrigger);
+        super(name, type, firstTrigger + " AND " + secondTrigger);
         this.firstTrigger = firstTrigger;
         this.secondTrigger = secondTrigger;
         this.ruleController = RuleController.getInstance(id);

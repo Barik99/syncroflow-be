@@ -13,7 +13,6 @@ import java.util.List;
 
 @Service
 public class ActionService {
-    // Database URL
 
     public boolean addAction(Actions action, String email) {
         if (checkIfActionExists(action.getName())) {
@@ -33,7 +32,6 @@ public class ActionService {
         return false;
     }
 
-    // create a function that gets as input an action and returns the SQL string used to insert the action in the database based on the type of the action
     private List<PreparedStatement> prepareStatementAction(Actions action, Connection connection, String email) throws SQLException {
         List<PreparedStatement> preparedStatement = new ArrayList<>();
         PreparedStatement actionPreparedStatement = connection.prepareStatement("INSERT INTO actions (name, type, value, creator_email) VALUES (?, ?, ?, ?)");
